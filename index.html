@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Food Safety Intelligence</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background-glow"></div>
+
+<div class="floating-icons">
+
+    <div class="food food1">🍔</div>
+    <div class="food food2">🍕</div>
+    <div class="food food3">🥗</div>
+    <div class="food food4">🍜</div>
+    <div class="food food5">☕</div>
+
+</div>
+
+<div class="chat-container">
+
+    <div class="hero">
+
+        <h1>
+            Food Safety Intelligence
+        </h1>
+
+        <p>
+            AI-powered food hygiene monitoring,
+            contamination detection and risk analytics.
+        </p>
+
+        <a href="/dashboard"
+           class="dashboard-btn">
+
+            Open Analytics Dashboard →
+
+        </a>
+
+    </div>
+
+    <div class="glass-panel">
+
+        <div class="restaurant-selector">
+
+            <label for="restaurant">
+
+                Select Restaurant
+
+            </label>
+
+            <select id="restaurant">
+
+                <option value="Burger Hub">
+                    Burger Hub
+                </option>
+
+                <option value="Food Palace">
+                    Food Palace
+                </option>
+
+                <option value="Spicy Kitchen">
+                    Spicy Kitchen
+                </option>
+
+            </select>
+
+        </div>
+
+        <div id="chat-box" class="chat-box">
+
+            <div class="message bot-message">
+
+                Welcome.
+
+                Describe the food condition and the AI
+                will generate a food safety assessment.
+
+            </div>
+
+        </div>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="user-input"
+                placeholder="Describe the food quality, hygiene or packaging..."
+            >
+
+            <button onclick="sendMessage()">
+
+                Analyze →
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
