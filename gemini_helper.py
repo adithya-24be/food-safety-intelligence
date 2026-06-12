@@ -1,33 +1,45 @@
-import google.generativeai as genai
 import os
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+API_KEY = os.getenv("GEMINI_API_KEY")
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+if API_KEY:
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-flash")
+else:
+    model = None
 
 
 def extract_signals(user_text):
+
+    if model is None:
+        return """
+Assessment Summary:
+Gemini API key not configured.
+
+Severity:
+Unknown
+
+Recommendation:
+Unable to Analyze
+"""
 
     prompt = f"""
 You are a professional Food Safety Inspector AI.
 
 Analyze the customer's food review carefully.
 
-Your objectives:
-
+Objectives:
 1. Detect food hygiene and safety issues.
-2. Infer possible risks even if not directly mentioned.
-3. Determine the severity level.
-4. Explain your reasoning professionally.
-5. Recommend whether the food is safe to consume.
+2. Infer possible risks.
+3. Determine severity.
+4. Explain reasoning.
+5. Recommend whether food is safe.
 
-Possible food safety concerns include:
-
+Possible concerns:
 - bad smell
 - sour smell
 - rotten smell
@@ -47,7 +59,7 @@ Possible food safety concerns include:
 Return ONLY:
 
 Assessment Summary:
-A professional food safety assessment written in 3-5 sentences.
+(3-5 sentences)
 
 Severity:
 Low, Medium or High
@@ -60,14 +72,12 @@ Customer Review:
 """
 
     try:
-
         response = model.generate_content(prompt)
-
         return response.text.strip()
 
     except Exception as e:
 
-        print("GEMINI ERROR:", e)
+        print("GEMINI ERROR:", str(e))
 
         return f"""
 Assessment Summary:

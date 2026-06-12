@@ -1,0 +1,6 @@
+Flask
+gunicorn
+mysql-connector-python
+google-generativeai
+reportlab
+python-dotenv
