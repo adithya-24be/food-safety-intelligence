@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Food Safety Intelligence Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:'Inter',sans-serif;
+
+            background:
+            linear-gradient(
+                135deg,
+                #eef2ff,
+                #f8fafc,
+                #e0f2fe
+            );
+
+            min-height:100vh;
+
+            padding:40px;
+
+            color:#111827;
+        }
+
+        .container{
+            max-width:1400px;
+            margin:auto;
+        }
+
+        h1{
+
+            font-size:52px;
+            font-weight:700;
+
+            margin-bottom:35px;
+
+            letter-spacing:-1.5px;
+        }
+
+        .subtitle{
+
+            color:#6b7280;
+            margin-bottom:30px;
+            font-size:18px;
+        }
+
+        .grid{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(280px,1fr));
+
+            gap:24px;
+
+            margin-bottom:24px;
+        }
+
+        .card{
+
+            background:
+            rgba(255,255,255,0.65);
+
+            backdrop-filter:blur(25px);
+            -webkit-backdrop-filter:blur(25px);
+
+            border:
+            1px solid rgba(255,255,255,0.4);
+
+            border-radius:28px;
+
+            padding:28px;
+
+            box-shadow:
+            0 10px 40px rgba(0,0,0,0.08);
+
+            transition:
+            all .35s ease;
+
+            animation:
+            fadeUp .8s ease;
+        }
+
+        .card:hover{
+
+            transform:
+            translateY(-8px);
+
+            box-shadow:
+            0 18px 50px rgba(0,0,0,0.12);
+        }
+
+        .card h2{
+
+            font-size:18px;
+
+            color:#6b7280;
+
+            margin-bottom:12px;
+
+            font-weight:600;
+        }
+
+        .metric{
+
+            font-size:38px;
+
+            font-weight:700;
+
+            color:#111827;
+        }
+
+        canvas{
+
+            width:100% !important;
+            max-height:420px;
+        }
+
+        table{
+
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+
+            text-align:left;
+
+            padding:18px;
+
+            background:#111827;
+
+            color:white;
+
+            font-weight:600;
+        }
+
+        td{
+
+            padding:18px;
+
+            border-bottom:
+            1px solid #e5e7eb;
+        }
+
+        tr:hover{
+
+            background:
+            rgba(0,0,0,0.03);
+        }
+
+        @keyframes fadeUp{
+
+            from{
+
+                opacity:0;
+                transform:
+                translateY(25px);
+            }
+
+            to{
+
+                opacity:1;
+                transform:
+                translateY(0);
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Food Safety Intelligence</h1>
+
+    <div class="subtitle">
+        AI-powered food hygiene monitoring and risk analytics
+    </div>
+
+    <div style="margin-bottom:30px;">
+
+    <a href="/"
+       style="
+       text-decoration:none;
+       padding:14px 22px;
+       background:#2563eb;
+       color:white;
+       border-radius:14px;
+       font-weight:600;
+       display:inline-block;
+       margin-right:10px;">
+
+       ← Back To Chatbot
+
+    </a>
+
+    <a href="/history"
+       style="
+       text-decoration:none;
+       padding:14px 22px;
+       background:#111827;
+       color:white;
+       border-radius:14px;
+       font-weight:600;
+       display:inline-block;">
+
+       📜 Analysis History
+
+    </a>
+
+</div>
+
+    <div class="grid">
+
+        <div class="card">
+            <h2>🦠 Most Common Issue</h2>
+            <div class="metric">{{ issue[1] }}</div>
+            <p>{{ issue[0] }}</p>
+        </div>
+
+        <div class="card">
+            <h2>📊 Average Confidence</h2>
+            <div class="metric">{{ avg_confidence }}%</div>
+        </div>
+
+        <div class="card">
+            <h2>⚠️ Total Incidents</h2>
+            <div class="metric">{{ total_incidents }}</div>
+        </div>
+
+        <div class="card">
+            <h2>🏪 Worst Restaurant</h2>
+            <div class="metric">{{ restaurant[1] }}</div>
+            <p>{{ restaurant[0] }}</p>
+        </div>
+
+    </div>
+
+    <div class="grid">
+
+        <div class="card">
+
+            <h2>Restaurant Incident Analytics</h2>
+
+            <canvas id="restaurantChart"></canvas>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Risk Distribution</h2>
+
+            <canvas id="riskChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Confidence Score Trend</h2>
+
+        <canvas id="trendChart"></canvas>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Recent Analyses</h2>
+
+        <table>
+
+            <tr>
+
+                <th>Restaurant</th>
+
+                <th>Confidence Score</th>
+
+                <th>Risk Level</th>
+
+            </tr>
+
+            {% for row in recent %}
+
+            <tr>
+
+                <td>{{ row[0] }}</td>
+
+                <td>{{ row[1] }}</td>
+
+                <td>{{ row[2] }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const restaurantNames = [
+{% for row in restaurant_chart %}
+"{{ row[0] }}",
+{% endfor %}
+];
+
+const incidentCounts = [
+{% for row in restaurant_chart %}
+{{ row[1] }},
+{% endfor %}
+];
+
+new Chart(
+document.getElementById('restaurantChart'),
+{
+type:'bar',
+data:{
+labels:restaurantNames,
+datasets:[{
+label:'Incidents',
+data:incidentCounts,
+backgroundColor:'#60a5fa',
+borderRadius:12
+}]
+}
+}
+);
+
+const riskLabels = [
+{% for row in risk_distribution %}
+"{{ row[0] }}",
+{% endfor %}
+];
+
+const riskCounts = [
+{% for row in risk_distribution %}
+{{ row[1] }},
+{% endfor %}
+];
+
+new Chart(
+document.getElementById('riskChart'),
+{
+type:'doughnut',
+data:{
+labels:riskLabels,
+datasets:[{
+data:riskCounts
+}]
+}
+}
+);
+
+const trendLabels = [
+{% for row in confidence_trend %}
+"Analysis {{ row[0] }}",
+{% endfor %}
+];
+
+const trendScores = [
+{% for row in confidence_trend %}
+{{ row[1] }},
+{% endfor %}
+];
+
+new Chart(
+document.getElementById('trendChart'),
+{
+type:'line',
+data:{
+labels:trendLabels,
+datasets:[{
+label:'Confidence Score',
+data:trendScores,
+borderColor:'#2563eb',
+backgroundColor:'rgba(37,99,235,.1)',
+fill:true,
+tension:.4
+}]
+}
+}
+);
+
+</script>
+
+</body>
+
+</html>
