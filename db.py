@@ -1,12 +1,34 @@
 import os
 import mysql.connector
+from dotenv import load_dotenv
 
-conn = mysql.connector.connect(
-    host=os.getenv("MYSQLHOST"),
-    user=os.getenv("MYSQLUSER"),
-    password=os.getenv("MYSQLPASSWORD"),
-    database=os.getenv("MYSQLDATABASE"),
-    port=int(os.getenv("MYSQLPORT"))
-)
+load_dotenv()
 
-cursor = conn.cursor()
+MYSQLHOST = os.getenv("MYSQLHOST")
+MYSQLUSER = os.getenv("MYSQLUSER")
+MYSQLPASSWORD = os.getenv("MYSQLPASSWORD")
+MYSQLDATABASE = os.getenv("MYSQLDATABASE")
+MYSQLPORT = os.getenv("MYSQLPORT")
+
+if MYSQLHOST:
+    print("Using Render/Railway MySQL")
+
+    conn = mysql.connector.connect(
+        host=MYSQLHOST,
+        user=MYSQLUSER,
+        password=MYSQLPASSWORD,
+        database=MYSQLDATABASE,
+        port=int(MYSQLPORT)
+    )
+else:
+    print("Using Local MySQL")
+
+    conn = mysql.connector.connect(
+        host="localhost",
+        user="foodapp",
+        password="food123",
+        database="food_safety_system",
+        port=3306
+    )
+
+cursor = conn.cursor(dictionary=True)
