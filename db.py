@@ -31,4 +31,7 @@ else:
         port=3306
     )
 
-cursor = conn.cursor(dictionary=True)
+# The application consistently reads query results by position (row[0],
+# row[1], etc.), including in the Jinja templates. Return tuple rows so the
+# cursor matches that contract.
+cursor = conn.cursor()

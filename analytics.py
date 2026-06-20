@@ -15,7 +15,7 @@ def most_common_issue():
         """
     )
 
-    return cursor.fetchone()
+    return cursor.fetchone() or ("No incidents", 0)
 
 
 def worst_restaurant():
@@ -32,7 +32,7 @@ def worst_restaurant():
         """
     )
 
-    return cursor.fetchone()
+    return cursor.fetchone() or ("No incidents", 0)
 
 
 def total_incidents():
@@ -93,19 +93,6 @@ def average_confidence():
         return round(result, 2)
 
     return 0
-def risk_distribution():
-
-    cursor.execute(
-        """
-        SELECT
-            risk_level,
-            COUNT(*) as total
-        FROM AnalysisHistory
-        GROUP BY risk_level
-        """
-    )
-
-    return cursor.fetchall()
 def risk_distribution():
 
     cursor.execute(
