@@ -14,7 +14,7 @@ async function sendMessage() {
 
     userDiv.innerHTML = `
         <strong>${restaurant.value}</strong><br>
-        ${text}
+        ${escapeHtml(text)}
     `;
 
     chatBox.appendChild(userDiv);
@@ -58,6 +58,10 @@ async function sendMessage() {
 
         loadingDiv.remove();
 
+        if (!response.ok || data.error) {
+            throw new Error(data.error || "Analysis could not be completed.");
+        }
+
         const botDiv = document.createElement("div");
 
         botDiv.className = "message bot-message";
@@ -73,11 +77,11 @@ async function sendMessage() {
      style="--score:${data.score}">
 
             <div class="score-title">
-                Food Confidence
+                Food Safety Score
             </div>
 
             <div class="score-value">
-                ${data.score}%
+                ${escapeHtml(String(data.score))}%
             </div>
 
         </div>
@@ -85,25 +89,25 @@ async function sendMessage() {
 
     <div class="metric-card">
         <div class="metric-icon">⭐</div>
-        <div class="metric-value">${data.metrics.rating}</div>
+        <div class="metric-value">${escapeHtml(String(data.metrics.rating))}</div>
         <div class="metric-label">Rating</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-icon">📦</div>
-        <div class="metric-value">${data.metrics.orders}</div>
+        <div class="metric-value">${escapeHtml(String(data.metrics.orders))}</div>
         <div class="metric-label">Orders</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-icon">⚠️</div>
-        <div class="metric-value">${data.metrics.complaints}</div>
+        <div class="metric-value">${escapeHtml(String(data.metrics.complaints))}</div>
         <div class="metric-label">Complaints</div>
     </div>
 
     <div class="metric-card">
         <div class="metric-icon">💸</div>
-        <div class="metric-value">${data.metrics.refunds}</div>
+        <div class="metric-value">${escapeHtml(String(data.metrics.refunds))}</div>
         <div class="metric-label">Refunds</div>
     </div>
 
@@ -113,7 +117,7 @@ async function sendMessage() {
             <h3>⚠️ Risk Level</h3>
 
             <div class="risk-badge ${getRiskClass(data.risk)}">
-    ${data.risk}
+    ${escapeHtml(data.risk)}
 </div>
 
         </div>
@@ -122,7 +126,7 @@ async function sendMessage() {
 
             <h3>🚨 Detected Issues</h3>
 
-            <p>${data.issues && data.issues.length ? data.issues.join(", ") : "None"}</p>
+            <p>${data.issues && data.issues.length ? escapeHtml(data.issues.join(", ")) : "None"}</p>
 
         </div>
 
@@ -130,7 +134,7 @@ async function sendMessage() {
 
             <h3>🤖 AI Assessment</h3>
 
-            <p>${data.analysis}</p>
+            <p>${escapeHtml(data.analysis).replace(/\n/g, "<br>")}</p>
 
         </div>
 
@@ -150,11 +154,21 @@ async function sendMessage() {
         errorDiv.className = "message bot-message";
 
         errorDiv.innerHTML = `
-            ❌ Failed to contact AI service.
+            ❌ ${error.message || "Failed to contact the analysis service."}
         `;
 
         chatBox.appendChild(errorDiv);
     }
+}
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    }[character]));
 }
 
 document

@@ -85,8 +85,11 @@ def chat():
 
         data = request.json
 
-        user_message = data["message"]
-        restaurant_name = data["restaurant"]
+        user_message = (data or {}).get("message", "").strip()
+        restaurant_name = (data or {}).get("restaurant", "").strip()
+
+        if not user_message or not restaurant_name:
+            return jsonify({"error": "Restaurant and food description are required."}), 400
 
         signals_text = extract_signals(
             user_message
@@ -104,9 +107,7 @@ def chat():
 
         if not metrics:
 
-            return jsonify({
-                "error": "Restaurant not found"
-            })
+            return jsonify({"error": "Restaurant not found"}), 404
 
         rating, total_orders, complaints, refunds = metrics
 
@@ -203,11 +204,7 @@ def chat():
 
         print("ERROR:", str(e))
 
-        return jsonify({
-
-            "error": str(e)
-
-        })
+        return jsonify({"error": "Analysis service is temporarily unavailable."}), 500
 
 
 if __name__ == "__main__":

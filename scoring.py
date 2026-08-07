@@ -2,7 +2,7 @@ from db import cursor
 import re
 
 CRITICAL_SIGNALS = [
-    "food poisoning",
+    "food poisoning symptoms",
     "undercooked chicken",
     "raw chicken",
     "mold",
@@ -37,7 +37,7 @@ def extract_detected_signals(gemini_text):
     return [
         x.strip().lower()
         for x in signal_text.split(",")
-        if x.strip()
+        if x.strip() and x.strip().lower() != "none"
     ]
 
 
