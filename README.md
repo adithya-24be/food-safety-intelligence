@@ -83,12 +83,12 @@ flask --app app run --debug
 
 Open `http://127.0.0.1:5000`.
 
-## Deploying on Render
+## Deploying
 
-1. Create a new Render Web Service from this repository.
+1. Create a new Python Web Service from this repository on Railway, Render, or an equivalent provider.
 2. Set build command to `pip install -r requirements.txt`.
 3. Set start command to `gunicorn app:app` (also defined in `Procfile`).
-4. Add `GEMINI_API_KEY` and all `MYSQL*` values from `.env.example` as Render environment variables.
+4. Add `GEMINI_API_KEY` and all `MYSQL*` values from `.env.example` as environment variables.
 5. Initialize the connected MySQL database with `schema.sql` before opening the app.
 6. Verify `/`, `/dashboard`, and `/history` in an incognito browser before sharing the URL with judges.
 
@@ -128,4 +128,3 @@ docs/architecture.md    Architecture diagram
 - Validate the signal taxonomy with food-safety experts.
 - Add calibrated risk models and evaluation against approved, de-identified datasets.
 - Integrate verified inspection data and a human-feedback loop.
-
